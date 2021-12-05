@@ -38,7 +38,7 @@ fn shorten(
     cache: &mut HashMap<Vec<char>, Vec<char>>,
 ) -> Vec<char> {
     if let Some(cached) = cache.get(s) {
-        return cached.clone();
+        cached.clone()
     } else if s.is_empty() {
         vec![]
     } else {
@@ -51,13 +51,13 @@ fn shorten(
             let tail = &s[prefix_len..];
             let short_tail = shorten(tail, compdb, cache);
 
-            let compdb_range = find_range_starting(&s[..prefix_len], &partial_compdb);
+            let compdb_range = find_range_starting(&s[..prefix_len], partial_compdb);
 
             partial_compdb = &partial_compdb[compdb_range.clone()];
 
             let mut candidate = vec![];
 
-            if compdb_range.len() >= 1 && partial_compdb[0].long() == &s[..prefix_len] {
+            if !compdb_range.is_empty() && partial_compdb[0].long() == &s[..prefix_len] {
                 candidate.push(partial_compdb[0].short());
             } else {
                 // Cannot shorten with this prefix, but there may be longer matches
@@ -67,7 +67,7 @@ fn shorten(
             candidate.extend_from_slice(&short_tail);
             candidates.push(candidate);
 
-            if compdb_range.len() == 0 || prefix_len == s.len() {
+            if compdb_range.is_empty() || prefix_len == s.len() {
                 break;
             } else {
                 prefix_len += 1;

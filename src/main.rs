@@ -32,13 +32,11 @@ fn main() {
 
     let stdin = stdin();
 
-    let s = if arg_matches.is_present("eof") {
-        let mut s = String::new();
+    let mut s = String::new();
+    if arg_matches.is_present("eof") {
         stdin.lock().read_to_string(&mut s).unwrap();
-        s
     } else {
         // Read until an empty line, or eof
-        let mut s = String::new();
         for line in stdin.lock().lines().filter_map(|r| r.ok()) {
             if line.is_empty() {
                 break;
@@ -47,8 +45,7 @@ fn main() {
                 s += "\n";
             }
         }
-        s
-    };
+    }
 
     let short = shorten_str(&s, mode);
     print!("{}", short);

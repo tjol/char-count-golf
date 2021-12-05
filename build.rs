@@ -7,9 +7,9 @@ use std::path::Path;
 use superslice::Ext;
 use unicode_normalization::char::decompose_compatible;
 
-const BANNED: &'static [char] = &['\u{1F14D}'];
-const MAGIC_PUNCUATION: &'static [char] = &['.', ',', '/'];
-const DIGITS: &'static [char] = &['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+const BANNED: &[char] = &['\u{1F14D}'];
+const MAGIC_PUNCUATION: &[char] = &['.', ',', '/'];
+const DIGITS: &[char] = &['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
 fn build_composition_database(lowercase: bool) -> Vec<(Vec<char>, char)> {
     let mut db = vec![];
@@ -50,10 +50,8 @@ fn ignore_punctuation(db: &mut Vec<(Vec<char>, char)>) {
                     .into_iter()
                     .filter(|c| !MAGIC_PUNCUATION.contains(c))
                     .collect();
-                if without_punct.len() < seq.len() {
-                    if !new_entries.contains_key(&without_punct) {
-                        new_entries.insert(without_punct, item.1);
-                    }
+                if without_punct.len() < seq.len() && !new_entries.contains_key(&without_punct) {
+                    new_entries.insert(without_punct, item.1);
                 }
             }
         }
@@ -88,7 +86,7 @@ fn write_compdb<W: Write>(
     compdb: &[(Vec<char>, char)],
     maxlen: usize,
 ) -> std::io::Result<()> {
-    writeln!(outf, "const {}: [Composition; {}] = [", name, compdb.len())?;
+    writeln!(outf, "static {}: [Composition; {}] = [", name, compdb.len())?;
     for comp in compdb {
         let mut long_extended = comp.0.clone();
         long_extended.resize(maxlen, '\0');
