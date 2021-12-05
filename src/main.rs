@@ -19,7 +19,12 @@ impl Composition {
 
 fn find_range_starting(s: &[char], compdb: &[Composition]) -> Range<usize> {
     let len = s.len();
-    compdb.equal_range_by_key(&s, |comp| {
+    let s_lower = s
+        .iter()
+        .flat_map(|c| c.to_lowercase())
+        .collect::<Vec<char>>();
+    let slice: &[char] = &s_lower;
+    compdb.equal_range_by_key(&slice, |comp| {
         if comp.long().len() >= len {
             &comp.long()[..len]
         } else {

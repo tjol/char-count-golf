@@ -12,12 +12,13 @@ fn build_composition_database() -> Vec<(Vec<char>, char)> {
         decompose_compatible(c, |c2| {
             s.push(c2);
         });
-        let chars: Vec<char> = s.chars().collect();
+        let chars: Vec<char> = s.to_lowercase().chars().collect();
         if chars.len() != 1 {
             db.push((chars, c));
         }
     }
     db.sort();
+    db.dedup_by_key(|item| item.0.clone());
     db
 }
 
