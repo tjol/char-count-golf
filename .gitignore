@@ -4,3 +4,6 @@
 .*.sw?
 Cargo.lock
 /pkg
+node_modules
+pnpm-lock.yaml
+package-lock.json

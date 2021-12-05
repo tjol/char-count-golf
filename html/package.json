@@ -1,0 +1,10 @@
+{
+  "name": "char-count-golf-web",
+  "version": "0.1.0",
+  "dependencies": {
+    "char-count-golf": "../pkg"
+  },
+  "devDependencies": {
+    "vite": "^2.6.4"
+  }
+}

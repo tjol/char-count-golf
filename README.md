@@ -1,1 +1,6 @@
-![Tweet: my new theoretical game "character count golf" where you try to write something in as few unicode characters as possible. i am working on spreadsheets](origin-story.png)
+# Character count golf
+
+char-count-golf tries to shorten a string by replacing sequences of
+characters with other more-or-less equivalent Unicode characters.
+
+For example, "am" can be replaced by "㏂" and "co" can be replaced by "㏇".
