@@ -3,38 +3,25 @@ use std::ops::Range;
 
 use hashbrown::HashMap;
 use superslice::Ext;
-use unicode_normalization::char::decompose_compatible;
 
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
-struct Composition {
-    long: Vec<char>,
-    short: char,
-}
+// Defines struct Composition and const COMPOSITION_DATABASE: [Composition; _]
+include!(concat!(env!("OUT_DIR"), "/compdb.rs"));
 
-fn build_composition_database() -> Vec<Composition> {
-    let mut db = vec![];
-    for c in '\u{0080}'..'\u{10FFFF}' {
-        let mut s = String::new();
-        decompose_compatible(c, |c2| {
-            s.push(c2);
-        });
-        let chars: Vec<char> = s.chars().collect();
-        if chars.len() != 1 {
-            db.push(Composition {
-                long: chars,
-                short: c,
-            });
-        }
+impl Composition {
+    fn long(&self) -> &[char] {
+        &self.long[..self.len]
     }
-    db.sort();
-    db
+
+    fn short(&self) -> char {
+        self.short
+    }
 }
 
 fn find_range_starting(s: &[char], compdb: &[Composition]) -> Range<usize> {
     let len = s.len();
     compdb.equal_range_by_key(&s, |comp| {
-        if comp.long.len() >= len {
-            &comp.long[..len]
+        if comp.long().len() >= len {
+            &comp.long()[..len]
         } else {
             &[]
         }
@@ -66,8 +53,8 @@ fn shorten(
 
             let mut candidate = vec![];
 
-            if compdb_range.len() >= 1 && partial_compdb[0].long == &s[..prefix_len] {
-                candidate.push(partial_compdb[0].short);
+            if compdb_range.len() >= 1 && partial_compdb[0].long() == &s[..prefix_len] {
+                candidate.push(partial_compdb[0].short());
             } else {
                 // Cannot shorten with this prefix, but there may be longer matches
                 candidate.extend_from_slice(&s[..prefix_len]);
@@ -98,11 +85,9 @@ fn shorten_str(s: &str, compdb: &[Composition]) -> String {
 }
 
 fn main() {
-    let compdb = build_composition_database();
-
     let mut s = String::new();
     stdin().lock().read_to_string(&mut s).unwrap();
 
-    let short = shorten_str(&s, &compdb);
+    let short = shorten_str(&s, &COMPOSITION_DATABASE);
     print!("{}", short);
 }
