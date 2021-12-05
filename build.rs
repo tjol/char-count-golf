@@ -105,7 +105,7 @@ fn write_compdb<W: Write>(
 }
 
 fn main() {
-    // let compdb_pedantic = build_composition_database(false);
+    let compdb_pedantic = build_composition_database(false);
     let compdb_lowercase = build_composition_database(true);
     let mut compdb_depunctuated = compdb_lowercase.clone();
     ignore_punctuation(&mut compdb_depunctuated);
@@ -123,14 +123,14 @@ fn main() {
     let mut outf = File::create(Path::new(&out_dir).join("compdb.rs")).unwrap();
 
     write_struct(&mut outf, maxlen).unwrap();
-    // write_compdb(&mut outf, "COMPOSITION_DATABASE", &compdb_lowercase, maxlen).unwrap();
-    // write_compdb(
-    //     &mut outf,
-    //     "COMPOSITION_DATABASE_PEDANTIC",
-    //     &compdb_pedantic,
-    //     maxlen,
-    // )
-    // .unwrap();
+    write_compdb(&mut outf, "COMPOSITION_DATABASE", &compdb_lowercase, maxlen).unwrap();
+    write_compdb(
+        &mut outf,
+        "COMPOSITION_DATABASE_PEDANTIC",
+        &compdb_pedantic,
+        maxlen,
+    )
+    .unwrap();
     write_compdb(
         &mut outf,
         "COMPOSITION_DATABASE_DEPUNCTUATED",

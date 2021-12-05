@@ -9,6 +9,9 @@ edition = "2021"
 superslice = "1.0.0"
 hashbrown = "0.11.2"
 
+[target.'cfg(not(target_family = "wasm"))'.dependencies]
+clap = "2.34.0"
+
 [build-dependencies]
 superslice = "1.0.0"
 unicode-normalization = "0.1.19"
