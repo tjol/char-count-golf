@@ -3,3 +3,4 @@
 *~
 .*.sw?
 Cargo.lock
+/pkg

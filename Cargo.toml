@@ -3,7 +3,8 @@ name = "char-count-golf"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 superslice = "1.0.0"
@@ -11,6 +12,9 @@ hashbrown = "0.11.2"
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
 clap = "2.34.0"
+
+[target.'cfg(target_family = "wasm")'.dependencies]
+wasm-bindgen = "0.2.78"
 
 [build-dependencies]
 superslice = "1.0.0"

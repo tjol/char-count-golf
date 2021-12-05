@@ -3,6 +3,9 @@ use std::ops::Range;
 use hashbrown::HashMap;
 use superslice::Ext;
 
+#[cfg(target_family = "wasm")]
+use wasm_bindgen::prelude::wasm_bindgen;
+
 // Defines struct Composition and const COMPOSITION_DATABASE: [Composition; _]
 include!(concat!(env!("OUT_DIR"), "/compdb.rs"));
 
@@ -88,16 +91,45 @@ fn shorten_str_with_db(s: &str, compdb: &[Composition]) -> String {
     shorten(&chars, compdb, &mut cache).into_iter().collect()
 }
 
+#[cfg_attr(target_family = "wasm", wasm_bindgen)]
+#[cfg_attr(not(target_family = "wasm"), repr(C))]
 pub enum ShortenMode {
     Normal,
     WithPunctuation,
     SameCase,
 }
 
+#[cfg_attr(target_family = "wasm", wasm_bindgen(js_name = "shortenString"))]
 pub fn shorten_str(s: &str, mode: ShortenMode) -> String {
     match mode {
         ShortenMode::Normal => shorten_str_with_db(s, &COMPOSITION_DATABASE),
         ShortenMode::WithPunctuation => shorten_str_with_db(s, &COMPOSITION_DATABASE_DEPUNCTUATED),
         ShortenMode::SameCase => shorten_str_with_db(s, &COMPOSITION_DATABASE_PEDANTIC),
+    }
+}
+
+#[cfg(not(target_family = "wasm"))]
+mod capi {
+    use super::{shorten_str, ShortenMode};
+    use std::ffi::CStr;
+    use std::os::raw::c_char;
+
+    #[no_mangle]
+    pub extern "C" fn shorten_str_utf8(
+        cstr_ptr: *const c_char,
+        dest: *mut c_char,
+        mode: ShortenMode,
+    ) -> bool {
+        let cstr = unsafe { CStr::from_ptr(cstr_ptr) };
+        if let Ok(s) = cstr.to_str() {
+            let result = shorten_str(s, mode);
+            unsafe {
+                std::ptr::copy_nonoverlapping(result.as_ptr() as *const c_char, dest, result.len());
+                *dest.offset(result.len() as isize) = 0;
+            }
+            true
+        } else {
+            false
+        }
     }
 }
