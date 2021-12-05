@@ -93,6 +93,6 @@ fn main() {
     let mut s = String::new();
     stdin().lock().read_to_string(&mut s).unwrap();
 
-    let short = shorten_str(&s, &COMPOSITION_DATABASE);
+    let short = shorten_str(&s, &COMPOSITION_DATABASE_DEPUNCTUATED);
     print!("{}", short);
 }

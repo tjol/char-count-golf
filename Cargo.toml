@@ -10,4 +10,5 @@ superslice = "1.0.0"
 hashbrown = "0.11.2"
 
 [build-dependencies]
+superslice = "1.0.0"
 unicode-normalization = "0.1.19"
