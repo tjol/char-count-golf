@@ -67,7 +67,7 @@ fn shorten(
             candidate.extend_from_slice(&short_tail);
             candidates.push(candidate);
 
-            if compdb_range.len() == 0 {
+            if compdb_range.len() == 0 || prefix_len == s.len() {
                 break;
             } else {
                 prefix_len += 1;
